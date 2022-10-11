@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="refershtokenFlow" doc:id="eb17f923-b4d7-4224-8477-bf0634c8a5c0" >
+		<http:listener doc:name="Listener" doc:id="0b737653-0e63-41c3-af7a-da436a50bb7e" config-ref="Calling_Google_API" path="/test"/>
+		<http:request method="POST" doc:name="Fetch Google  Tokens" doc:id="b799ca5a-7f67-49cb-b7ad-1f115e485db7" path="/token" config-ref="Fetch_Refresh_Token">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"redirect_uri" : "<Your redirect link>",
+	"client_secret" : "<client secret>",
+	"code" : attributes.queryParams.code,
+	"grant_type" : "authorization_code",
+	"client_id" : "<client id>"
+}]]]></http:query-params>
+		</http:request>
+		<set-variable value="#[payload.access_token]" doc:name="Store Refresh Token" doc:id="ea814dcf-d982-4790-8c2a-bf3b3ce98aae" variableName="refreshToken" />
+		<logger level="INFO" doc:name="Logger" doc:id="5f664e8b-70c6-487d-a56f-5b117f8e7489" />
+	</flow>
+</mule>
